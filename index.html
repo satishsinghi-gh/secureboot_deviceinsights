@@ -469,14 +469,15 @@
   <h3>Key Microsoft References</h3>
   <p>The following official sources were instrumental in building this approach:</p>
   <ul>
-    <li><a href="https://techcommunity.microsoft.com/blog/windows-itpro-blog/act-now-secure-boot-certificates-expire-in-june-2026/4385728" target="_blank">Act now: Secure Boot certificates expire in June 2026 &mdash; Windows IT Pro Blog</a></li>
-    <li><a href="https://support.microsoft.com/en-us/topic/secure-boot-certificate-updates-guidance-for-it-professionals-and-organizations-fe498568-dc39-4575-8c1d-4e5e01f2af06" target="_blank">Secure Boot Certificate updates: Guidance for IT professionals and organizations</a></li>
-    <li><a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf7-4ff0-4ef1-8540-65a30f95e445" target="_blank">Secure Boot DB and DBX variable update events</a></li>
-    <li><a href="https://support.microsoft.com/en-us/topic/microsoft-intune-method-of-secure-boot-for-windows-devices-with-it-managed-updates-25d76bd2-45a7-406e-9c20-d5bc2e718ab2" target="_blank">Microsoft Intune method of Secure Boot with IT-managed updates</a></li>
-    <li><a href="https://support.microsoft.com/en-us/topic/registry-key-updates-for-secure-boot-windows-devices-with-it-managed-updates-12cbcf12-f649-4396-85d4-7fce9a001814" target="_blank">Registry key updates for Secure Boot: IT-managed updates</a></li>
-    <li><a href="https://support.microsoft.com/en-us/topic/original-equipment-manufacturer-oem-pages-for-secure-boot-40e2498c-caac-480c-baf1-d40b8c37b267" target="_blank">OEM pages for Secure Boot</a></li>
-    <li><a href="https://www.dell.com/support/kbdoc/en-uk/000259095/microsoft-2011-secure-boot-certificate-expiration" target="_blank">Microsoft 2011 Secure Boot Certificate Expiration &mdash; Dell</a></li>
-    <li><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/trusted-launch" target="_blank">Trusted Launch for Azure VMs</a></li>
+    <li><a href="https://techcommunity.microsoft.com/blog/windows-itpro-blog/act-now-secure-boot-certificates-expire-in-june-2026/4426856" target="_blank">Act now: Secure Boot certificates expire in June 2026 &mdash; Windows IT Pro Blog</a></li>
+    <li><a href="https://techcommunity.microsoft.com/blog/windows-itpro-blog/secure-boot-playbook-for-certificates-expiring-in-2026/4469235" target="_blank">Secure Boot playbook for certificates expiring in 2026 &mdash; Windows IT Pro Blog</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/secure-boot-certificate-updates-guidance-for-it-professionals-and-organizations-e2b43f9f-b424-42df-bc6a-8476db65ab2f" target="_blank">Secure Boot Certificate updates: Guidance for IT professionals and organizations</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf8-608b-4a87-8175-bdead630eb69" target="_blank">Secure Boot DB and DBX variable update events</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/microsoft-intune-method-of-secure-boot-for-windows-devices-with-it-managed-updates-1c4cf9a3-8983-40c8-924f-44d9c959889d" target="_blank">Microsoft Intune method of Secure Boot with IT-managed updates</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/registry-key-updates-for-secure-boot-windows-devices-with-it-managed-updates-a7be69c9-4634-42e1-9ca1-df06f43f360d" target="_blank">Registry key updates for Secure Boot: IT-managed updates</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/original-equipment-manufacturer-oem-pages-for-secure-boot-9ecc3ba4-fb50-4bd3-9e9b-f16b35b8fb68" target="_blank">OEM pages for Secure Boot</a></li>
+    <li><a href="https://www.dell.com/support/kbdoc/en-uk/000347876/microsoft-2011-secure-boot-certificate-expiration" target="_blank">Microsoft 2011 Secure Boot Certificate Expiration &mdash; Dell</a></li>
+    <li><a href="https://support.lenovo.com/gb/en/solutions/HT518129" target="_blank">Secure Boot Certificate Expiration &mdash; Lenovo</a></li>
     <li><a href="https://directaccess.richardhicks.com/category/secure-boot/" target="_blank">Secure Boot &mdash; Richard M. Hicks Consulting</a></li>
   </ul>
 </section>
@@ -591,7 +592,7 @@
       <tr><td><strong>1800</strong></td><td>Pending reboot &mdash; the certificate update has been staged and is waiting for a restart to apply. Typically seen after the first reboot.</td></tr>
       <tr><td><strong>1801</strong></td><td>Certificates are available but not yet applied. Contains confidence level and diagnostic information.</td></tr>
       <tr><td><strong>1808</strong></td><td>Certificates have been successfully updated in firmware. This is the <strong>reliable success indicator</strong>.</td></tr>
-      <tr><td>Others</td><td>Various error and status codes documented in <a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf7-4ff0-4ef1-8540-65a30f95e445" target="_blank">Microsoft's event reference</a></td></tr>
+      <tr><td>Others</td><td>Various error and status codes documented in <a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf8-608b-4a87-8175-bdead630eb69" target="_blank">Microsoft's event reference</a></td></tr>
     </tbody>
   </table>
 </section>
@@ -929,10 +930,51 @@
 <!-- ======================= DEPLOYMENT ======================= -->
 <section id="deployment">
   <h2>8. Deployment: Certificate Update Rollout</h2>
-  <p>After thorough data collection, insight building, and prerequisite verification, the actual deployment is surprisingly straightforward. Based on extensive testing across multiple hardware models and configurations, the <strong>registry-based method has proven to be the most reliable</strong> approach for deploying the Secure Boot certificate updates.</p>
+  <p>After thorough data collection, insight building, and prerequisite verification, it is time to deploy the actual certificate updates. Microsoft provides multiple deployment methods, and understanding all of them &mdash; along with their prerequisites and trade-offs &mdash; is essential for choosing the right approach for your environment.</p>
 
-  <h3>The Deployment Method</h3>
-  <p>The simplest and most reliable method to trigger the Secure Boot certificate update is setting a single registry value:</p>
+  <h3>Prerequisites</h3>
+  <p>Regardless of which deployment method you choose, the following prerequisites must be met on each target device:</p>
+  <table>
+    <thead>
+      <tr><th>Prerequisite</th><th>Details</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Secure Boot Enabled</strong></td><td>Secure Boot must be turned on. Devices with Secure Boot off are not applicable for the certificate update.</td></tr>
+      <tr><td><strong>Firmware on Recommended Version</strong></td><td>The device must be running firmware on the version recommended by the OEM. This is critical &mdash; outdated firmware may fail to process the certificate update or cause unexpected errors. Check your OEM's Secure Boot guidance page (<a href="https://www.dell.com/support/kbdoc/en-uk/000347876/microsoft-2011-secure-boot-certificate-expiration" target="_blank">Dell</a>, <a href="https://support.lenovo.com/gb/en/solutions/HT518129" target="_blank">Lenovo</a>, etc.).</td></tr>
+      <tr><td><strong>OS Patches Current</strong></td><td>Device should be on a recent Windows cumulative update. The Secure Boot certificate update infrastructure relies on components delivered via Windows Update.</td></tr>
+      <tr><td><strong>Reboot Capability</strong></td><td>The certificate update requires one or more reboots to complete. Devices with excessive uptime or that never restart will not complete the process. As Microsoft states: <em>"The Secure Boot deployment relies on restarts happening as the normal course of using the device."</em></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Deployment Options</h3>
+  <p>Microsoft documents several deployment methods. It is important to evaluate all of them and choose based on your environment, licensing posture, and risk tolerance:</p>
+
+  <h4>1. Automated Deployment Assists (Microsoft-Managed)</h4>
+  <p>Microsoft provides two automated assists that can help deploy the certificates without direct IT intervention:</p>
+  <table>
+    <thead>
+      <tr><th>Assist</th><th>How It Works</th><th>Requirements</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>High-Confidence Cumulative Updates</strong></td>
+        <td>Microsoft creates "buckets" for unique device classes (defined by manufacturer, motherboard, firmware version, etc.). Once enough successful updates are observed for a bucket, it becomes "high-confidence" and the certificate update is included automatically in monthly cumulative updates. Microsoft has already started updating selected devices for high-confidence models beginning February 2026.</td>
+        <td>Does <strong>not</strong> require diagnostic data to be enabled. Enabled by default for high-confidence devices.</td>
+      </tr>
+      <tr>
+        <td><strong>Controlled Feature Rollout (CFR)</strong></td>
+        <td>Devices opted into CFR allow Microsoft to manage the certificate deployment. Microsoft monitors the rollout and controls pacing.</td>
+        <td>Requires <strong>diagnostic data</strong> enabled and the device must be opted in to CFR. Only supported on client versions of Windows 11 and Windows 10 with ESU.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warning">
+    <div class="callout-title">WARNING: Don't Solely Rely on Automated Assists</div>
+    <p>While Microsoft's automated deployment assists are helpful, they should not be your sole strategy. Not all devices will fall into high-confidence buckets, diagnostic data may not be enabled across your fleet, and CFR has its own limitations. It is best to keep all options open and proactively evaluate all deployment methods to ensure full coverage before the June 2026 deadline.</p>
+  </div>
+
+  <h4>2. Registry Key Method (IT-Managed)</h4>
+  <p>The registry-based method gives IT full control over deployment by setting a single registry value that triggers the built-in Secure Boot scheduled task:</p>
 
   <div class="reg-path">
     HKLM:\SYSTEM\CurrentControlSet\Control\SecureBoot\AvailableUpdates = 0x5944 (DWORD, Hex)
@@ -957,15 +999,52 @@
 New-ItemProperty -Path <span class="var">$RegPath</span> -Name <span class="var">$ValueName</span> `
     -PropertyType DWord -Value <span class="var">$HexValue</span> -Force | Out-Null</pre>
 
-  <p>This script can be deployed via Intune as a Platform Script, a Remediation Script, or any other deployment mechanism your organization uses.</p>
+  <p>This script can be deployed via Intune as a Platform Script, a Remediation Script, SCCM/ConfigMgr, GPO startup script, or any other deployment mechanism your organization uses. The full script is available on GitHub: <a href="https://github.com/satishsinghi-gh/secureboot_deviceinsights/blob/main/SecureBoot%20Certificate%20Update%20Deployment%20(Registry%20Config).ps1" target="_blank">SecureBoot Certificate Update Deployment (Registry Config).ps1</a></p>
+
+  <p>Once set, a Windows scheduled task runs every 12 hours and processes the certificate updates in a specific order:</p>
+  <table>
+    <thead>
+      <tr><th>Step</th><th>Bit</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>0x0040</td><td>Apply <strong>Windows UEFI CA 2023</strong> to the DB</td></tr>
+      <tr><td>2</td><td>0x0800</td><td>Apply <strong>Microsoft Option ROM UEFI CA 2023</strong> to the DB (if Microsoft Corporation UEFI CA 2011 is present)</td></tr>
+      <tr><td>3</td><td>0x1000</td><td>Apply <strong>Microsoft UEFI CA 2023</strong> to the DB (if Microsoft Corporation UEFI CA 2011 is present)</td></tr>
+      <tr><td>4</td><td>0x0004</td><td>Apply <strong>Microsoft Corporation KEK 2K CA 2023</strong> (signed by OEM's Platform Key)</td></tr>
+      <tr><td>5</td><td>0x0100</td><td>Apply the new boot manager signed by <strong>Windows UEFI CA 2023</strong></td></tr>
+    </tbody>
+  </table>
+  <p>Each step must succeed before the next one begins. As bits are processed, they are cleared from the <code>AvailableUpdates</code> value: 0x5944 &rarr; 0x5904 &rarr; 0x5104 &rarr; 0x4104 &rarr; 0x4100 &rarr; 0x4000. For complete details on the registry keys, see <a href="https://support.microsoft.com/en-us/topic/registry-key-updates-for-secure-boot-windows-devices-with-it-managed-updates-a7be69c9-4634-42e1-9ca1-df06f43f360d" target="_blank">Registry Key Updates for Secure Boot</a>.</p>
+
+  <h4>3. Microsoft Intune / Configuration Manager</h4>
+  <p>Microsoft documents that Intune and Configuration Manager can be used to deploy PowerShell scripts that set the registry keys. A native Configuration Service Provider (CSP) is expected in a future update.</p>
+  <div class="callout callout-danger">
+    <div class="callout-title">WARNING: Known Intune Policy Bug &mdash; Error Code 65000</div>
+    <p>In my experience, using the <strong>Intune Enable Secure Boot Certificate Updates</strong> policy resulted in <strong>Error Code 65000</strong> (Error Type 2) with a state of "Error" in the Intune admin center. This was caused by a <a href="https://patchmypc.com/blog/intune-policy-rejected-by-licensing/" target="_blank">known bug in Intune's licensing check</a> where the policy is rejected due to a flaw in license validation &mdash; even on properly licensed devices. The issue affected the "Enable Secure Boot Certificate Updates" setting under device configuration profiles.</p>
+    <p>Until this bug is confirmed resolved by Microsoft, the <strong>registry method deployed via Intune Platform Scripts</strong> (or Remediation Scripts) is a more reliable alternative, as it bypasses the CSP/policy layer entirely and directly configures the registry value.</p>
+  </div>
+
+  <h4>4. Group Policy Objects (GPO)</h4>
+  <p>Microsoft has indicated that Group Policy support for managing Secure Boot updates will be provided in a future update. Since GPO manages settings only, monitoring will need to be done through alternate methods such as registry key checks and event log monitoring.</p>
+
+  <h4>5. Windows Configuration System (WinCS) CLI</h4>
+  <p>For domain-joined environments, administrators can use the Windows Configuration System (WinCS) command-line tools (both a traditional executable and a PowerShell module) to query and apply Secure Boot configurations locally. This is an option for environments where other methods are not feasible.</p>
+
+  <h3>Why the Registry Method Was the Most Effective</h3>
+  <div class="callout callout-success">
+    <div class="callout-title">SUCCESS: Registry Method &mdash; Proven Across the Fleet</div>
+    <p>In my experience deploying across a diverse enterprise environment, the <strong>registry method was the most effective and reliable approach</strong> as long as the prerequisites were met &mdash; specifically, the device firmware was on the recommended version as documented by the OEM. It worked consistently across Dell, Lenovo, and HP hardware, across multiple firmware versions, and did not suffer from the licensing validation issues that plagued the native Intune policy approach.</p>
+    <p>The registry method gives IT full control over targeting and pacing, integrates cleanly with any deployment tool (Intune Platform Scripts, SCCM, GPO, etc.), and the progression through AvailableUpdates bits provides clear, monitorable state at every step.</p>
+  </div>
 
   <h3>The Reboot Requirement</h3>
   <div class="callout callout-info">
-    <div class="callout-title">INFO: Two Reboots Required &mdash; But Not Forced</div>
-    <p>Once the registry configuration is deployed, the device will require <strong>two reboots</strong> to complete the certificate update process. However, critically:</p>
+    <div class="callout-title">INFO: Reboots Required &mdash; But Not Forced</div>
+    <p>Once the deployment is triggered (by any method), the device will require <strong>one or more reboots</strong> to complete the certificate update process. Critically:</p>
     <ul>
       <li>The reboot is <strong>neither forced nor prompted</strong></li>
       <li>As Microsoft documents: "While a restart might be required to complete the process, initiating the deployment of the Secure Boot updates will not cause a restart. If a restart is needed, the Secure Boot deployment relies on restarts happening as the normal course of using the device."</li>
+      <li>Microsoft estimates approximately <strong>48 hours and one or more restarts</strong> for the certificates to fully apply</li>
       <li>Based on extensive testing, I can confirm that the process works exactly as documented &mdash; the updates apply during the next natural reboot cycle</li>
     </ul>
   </div>
@@ -978,10 +1057,13 @@ New-ItemProperty -Path <span class="var">$RegPath</span> -Name <span class="var"
       <tr><th>Indicator</th><th>Location / Event</th><th>What It Tells You</th></tr>
     </thead>
     <tbody>
+      <tr><td><strong>AvailableUpdates</strong></td><td>SecureBoot registry</td><td>Bit progression: 0x5944 &rarr; 0x5904 &rarr; ... &rarr; 0x4000 (completion)</td></tr>
       <tr><td><strong>UEFICA2023Status</strong></td><td>SecureBoot\Servicing registry</td><td>NotStarted &rarr; InProgress &rarr; Updated</td></tr>
       <tr><td><strong>UEFICA2023Error</strong></td><td>SecureBoot\Servicing registry</td><td>Error code if the update fails (anything other than 0 or blank needs investigation)</td></tr>
       <tr><td><strong>UEFICA2023ErrorEvent</strong></td><td>SecureBoot\Servicing registry</td><td>Associated error event for troubleshooting</td></tr>
+      <tr><td><strong>Event 1801</strong></td><td>System Event Log</td><td>Certificates have not been applied yet &mdash; device still needs updating</td></tr>
       <tr><td><strong>Event 1808</strong></td><td>System Event Log</td><td>Definitive confirmation: "Secure Boot CA certificates have been updated"</td></tr>
+      <tr><td><strong>Event 1795</strong></td><td>System Event Log</td><td>Firmware returned an error during certificate application &mdash; check with OEM for firmware update</td></tr>
       <tr><td><strong>KEK Certificate</strong></td><td>Get-UEFICertificate -Type KEK</td><td>Presence of "KEK 2K CA 2023" in firmware confirms physical update</td></tr>
     </tbody>
   </table>
@@ -990,18 +1072,12 @@ New-ItemProperty -Path <span class="var">$RegPath</span> -Name <span class="var"
 
   <h3>Deployment Best Practices</h3>
   <ol>
-    <li><strong>Test on every hardware model in your environment</strong> before broad deployment. OEM firmware differences can cause unexpected behavior.</li>
-    <li><strong>Ensure prerequisites are met</strong> on each device before enabling the update:
-      <ul>
-        <li>Secure Boot state is <strong>On</strong></li>
-        <li>Device is on the recommended firmware version as per OEM guidance</li>
-        <li>Device has recent OS patches (if not the latest)</li>
-        <li>Device has consistent reboot behavior (uptime is not excessive)</li>
-      </ul>
-    </li>
-    <li><strong>Deploy in rings</strong> &mdash; start with pilot groups, expand to early adopters, then broad deployment</li>
-    <li><strong>Monitor the dashboards daily</strong> during rollout to catch failures early</li>
-    <li><strong>Have a remediation plan</strong> for devices where Secure Boot is off or firmware is outdated</li>
+    <li><strong>Test on every hardware model in your environment</strong> before broad deployment. OEM firmware differences can cause unexpected behavior. Microsoft recommends testing at least 4 sample devices per unique device class (manufacturer + model + firmware version).</li>
+    <li><strong>Ensure prerequisites are met</strong> on each device before enabling the update &mdash; Secure Boot on, firmware current per OEM guidance, OS patched, and device rebooting regularly.</li>
+    <li><strong>Deploy in rings</strong> &mdash; start with pilot groups, expand to early adopters, then broad deployment. Pay particular attention to older devices that may no longer be supported by the manufacturer.</li>
+    <li><strong>Avoid mixing deployment methods</strong> on the same device. Choose one method per device and stick with it.</li>
+    <li><strong>Monitor the dashboards daily</strong> during rollout to catch failures early. Watch for Event 1795 (firmware errors) and stalled <code>AvailableUpdates</code> progression.</li>
+    <li><strong>Have a remediation plan</strong> for devices where Secure Boot is off, firmware is outdated, or the update process stalls.</li>
   </ol>
 </section>
 
@@ -1033,15 +1109,15 @@ New-ItemProperty -Path <span class="var">$RegPath</span> -Name <span class="var"
   </ul>
 
   <h3>Deployment Summary</h3>
-  <p>While the preparation is extensive, the actual deployment mechanism is elegantly simple:</p>
+  <p>While the preparation is extensive, multiple deployment paths exist. Evaluate all options &mdash; automated assists, registry keys, Intune/SCCM scripts, GPO, and WinCS CLI &mdash; and choose based on your environment:</p>
   <ol>
-    <li><strong>Ensure prerequisites</strong> are met (Secure Boot on, firmware current, device patched, rebooting regularly)</li>
-    <li><strong>Deploy the registry value</strong>: <code>AvailableUpdates = 0x5944</code> at <code>HKLM:\SYSTEM\CurrentControlSet\Control\SecureBoot</code></li>
-    <li><strong>Allow two natural reboots</strong> &mdash; no forced restart required</li>
-    <li><strong>Monitor via Event 1808</strong> and the UEFICA2023Status registry value for confirmation</li>
+    <li><strong>Ensure prerequisites</strong> are met (Secure Boot on, firmware current per OEM guidance, device patched, rebooting regularly)</li>
+    <li><strong>Choose your deployment method</strong> &mdash; the registry method (<code>AvailableUpdates = 0x5944</code>) has been the most effective and reliable in my testing, especially when delivered via Intune Platform Scripts</li>
+    <li><strong>Allow natural reboots</strong> &mdash; no forced restart required; Microsoft estimates ~48 hours and one or more reboots</li>
+    <li><strong>Monitor via Event 1808</strong>, the UEFICA2023Status registry value, and AvailableUpdates bit progression for confirmation</li>
   </ol>
 
-  <p>The registry-based method has been the most reliable in my testing, and the process works exactly as Microsoft has documented. The key to success is <strong>thorough preparation, not the deployment itself</strong>.</p>
+  <p>The key to success is <strong>thorough preparation, not the deployment itself</strong>. And while Microsoft has started automatic rollout for high-confidence device models, don't rely solely on that &mdash; keeping all deployment options evaluated and ready ensures your fleet is covered before the deadline.</p>
 
   <div class="callout callout-warning">
     <div class="callout-title">URGENT: Time Is Running Out</div>
@@ -1072,14 +1148,16 @@ New-ItemProperty -Path <span class="var">$RegPath</span> -Name <span class="var"
       <tr><th>Resource</th><th>Link</th></tr>
     </thead>
     <tbody>
-      <tr><td>Act now: Secure Boot certificates expire in June 2026</td><td><a href="https://techcommunity.microsoft.com/blog/windows-itpro-blog/act-now-secure-boot-certificates-expire-in-june-2026/4385728" target="_blank">Windows IT Pro Blog</a></td></tr>
-      <tr><td>Secure Boot Certificate updates: Guidance for IT professionals</td><td><a href="https://support.microsoft.com/en-us/topic/secure-boot-certificate-updates-guidance-for-it-professionals-and-organizations-fe498568-dc39-4575-8c1d-4e5e01f2af06" target="_blank">Microsoft Support</a></td></tr>
-      <tr><td>Secure Boot DB and DBX variable update events</td><td><a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf7-4ff0-4ef1-8540-65a30f95e445" target="_blank">Microsoft Support</a></td></tr>
-      <tr><td>Intune method for Secure Boot IT-managed updates</td><td><a href="https://support.microsoft.com/en-us/topic/microsoft-intune-method-of-secure-boot-for-windows-devices-with-it-managed-updates-25d76bd2-45a7-406e-9c20-d5bc2e718ab2" target="_blank">Microsoft Support</a></td></tr>
-      <tr><td>Registry key updates for Secure Boot</td><td><a href="https://support.microsoft.com/en-us/topic/registry-key-updates-for-secure-boot-windows-devices-with-it-managed-updates-12cbcf12-f649-4396-85d4-7fce9a001814" target="_blank">Microsoft Support</a></td></tr>
-      <tr><td>OEM pages for Secure Boot</td><td><a href="https://support.microsoft.com/en-us/topic/original-equipment-manufacturer-oem-pages-for-secure-boot-40e2498c-caac-480c-baf1-d40b8c37b267" target="_blank">Microsoft Support</a></td></tr>
-      <tr><td>Dell Secure Boot Certificate Expiration</td><td><a href="https://www.dell.com/support/kbdoc/en-uk/000259095/microsoft-2011-secure-boot-certificate-expiration" target="_blank">Dell Support</a></td></tr>
-      <tr><td>Trusted Launch for Azure VMs</td><td><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/trusted-launch" target="_blank">Microsoft Learn</a></td></tr>
+      <tr><td>Act now: Secure Boot certificates expire in June 2026</td><td><a href="https://techcommunity.microsoft.com/blog/windows-itpro-blog/act-now-secure-boot-certificates-expire-in-june-2026/4426856" target="_blank">Windows IT Pro Blog</a></td></tr>
+      <tr><td>Secure Boot playbook for certificates expiring in 2026</td><td><a href="https://techcommunity.microsoft.com/blog/windows-itpro-blog/secure-boot-playbook-for-certificates-expiring-in-2026/4469235" target="_blank">Windows IT Pro Blog</a></td></tr>
+      <tr><td>Secure Boot Certificate updates: Guidance for IT professionals</td><td><a href="https://support.microsoft.com/en-us/topic/secure-boot-certificate-updates-guidance-for-it-professionals-and-organizations-e2b43f9f-b424-42df-bc6a-8476db65ab2f" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>Secure Boot DB and DBX variable update events</td><td><a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf8-608b-4a87-8175-bdead630eb69" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>Intune method for Secure Boot IT-managed updates</td><td><a href="https://support.microsoft.com/en-us/topic/microsoft-intune-method-of-secure-boot-for-windows-devices-with-it-managed-updates-1c4cf9a3-8983-40c8-924f-44d9c959889d" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>Registry key updates for Secure Boot</td><td><a href="https://support.microsoft.com/en-us/topic/registry-key-updates-for-secure-boot-windows-devices-with-it-managed-updates-a7be69c9-4634-42e1-9ca1-df06f43f360d" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>OEM pages for Secure Boot</td><td><a href="https://support.microsoft.com/en-us/topic/original-equipment-manufacturer-oem-pages-for-secure-boot-9ecc3ba4-fb50-4bd3-9e9b-f16b35b8fb68" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>Dell Secure Boot Certificate Expiration</td><td><a href="https://www.dell.com/support/kbdoc/en-uk/000347876/microsoft-2011-secure-boot-certificate-expiration" target="_blank">Dell Support</a></td></tr>
+      <tr><td>Lenovo Secure Boot Certificate Expiration</td><td><a href="https://support.lenovo.com/gb/en/solutions/HT518129" target="_blank">Lenovo Support</a></td></tr>
+      <tr><td>Intune Policy Rejected by Licensing (Error 65000)</td><td><a href="https://patchmypc.com/blog/intune-policy-rejected-by-licensing/" target="_blank">Patch My PC</a></td></tr>
       <tr><td>Secure Boot (Richard M. Hicks Consulting)</td><td><a href="https://directaccess.richardhicks.com/category/secure-boot/" target="_blank">richardhicks.com</a></td></tr>
     </tbody>
   </table>
