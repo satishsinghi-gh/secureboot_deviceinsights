@@ -526,25 +526,35 @@
 <!-- ======================= WHAT IS CHANGING ======================= -->
 <section id="what-is-changing">
   <h2>3. What is Changing?</h2>
-  <p>Microsoft is replacing the <strong>Microsoft Corporation KEK CA 2011</strong> and <strong>Microsoft Windows UEFI CA 2011</strong> certificates with their 2023 successors. Specifically:</p>
+  <p>Microsoft is replacing three critical Secure Boot certificates that were originally provisioned in 2011 with their 2023 successors. These certificates span the KEK database and the Signature Database (DB), and together they form the complete trust chain that Windows and third-party UEFI applications rely on during boot.</p>
 
   <table>
     <thead>
-      <tr><th>Component</th><th>Legacy (2011)</th><th>New (2023)</th></tr>
+      <tr><th>Component</th><th>Database</th><th>Legacy (2011)</th><th>New (2023)</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>KEK</strong></td>
+        <td><strong>Key Exchange Key</strong></td>
+        <td>KEK</td>
         <td>CN=Microsoft Corporation KEK CA 2011</td>
         <td>CN=Microsoft Corporation KEK 2K CA 2023</td>
       </tr>
       <tr>
         <td><strong>Windows UEFI CA</strong></td>
+        <td>DB</td>
         <td>CN=Microsoft Windows Production PCA 2011</td>
         <td>CN=Microsoft Windows UEFI CA 2023</td>
       </tr>
+      <tr>
+        <td><strong>Third-Party UEFI CA</strong></td>
+        <td>DB</td>
+        <td>CN=Microsoft Corporation UEFI CA 2011</td>
+        <td>CN=Microsoft UEFI CA 2023</td>
+      </tr>
     </tbody>
   </table>
+
+  <p>Each of these three certificates serves a distinct role in the Secure Boot trust chain. The <strong>KEK certificate</strong> is what authorizes Microsoft to update the DB and DBX databases on your devices &mdash; without a valid KEK, Windows cannot add new trusted signatures or revoke compromised ones, effectively freezing your security posture. The <strong>Windows UEFI CA</strong> is the certificate that validates the Windows boot loader, kernel, and early-load drivers &mdash; it is the reason Windows is allowed to boot at all on a Secure Boot-enabled device. The <strong>Third-Party UEFI CA</strong> validates non-Windows UEFI applications, drivers, and Option ROMs &mdash; this includes hardware add-in card firmware (network adapters, storage controllers, GPUs), third-party bootloaders (e.g., Linux shim), and other UEFI-signed components. If any of these three certificates expire without being replaced, the corresponding trust chain breaks.</p>
 
   <p>The certificate update process involves writing the new certificates to the UEFI firmware's KEK and DB databases. This is a firmware-level change and requires a device reboot to apply. Microsoft has built servicing mechanisms into Windows to facilitate this, but <strong>the process is not automatic for IT-managed devices</strong> &mdash; organizations must explicitly enable the update.</p>
 </section>
