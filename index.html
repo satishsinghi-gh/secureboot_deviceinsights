@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preparing Your Enterprise for Microsoft Secure Boot Certificate Expiration — June 2026</title>
+<meta name="description" content="A comprehensive, field-tested guide to data gathering, governance, and deployment strategy for the Microsoft Secure Boot certificate transition — from telemetry collection to PowerBI insights and production rollout.">
+<meta name="author" content="Satish Singhi">
+
+<!-- Open Graph (LinkedIn, Facebook, etc.) -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Preparing Your Enterprise for Microsoft Secure Boot Certificate Expiration — June 2026">
+<meta property="og:description" content="A comprehensive, field-tested guide covering data gathering, governance dashboards, and deployment strategy for the Secure Boot certificate transition. Includes PowerShell scripts, PowerBI insights, and a production-tested rollout playbook.">
+<meta property="og:url" content="https://satishsinghi-gh.github.io/secureboot_deviceinsights/">
+<meta property="og:site_name" content="Satish Singhi — Enterprise Endpoint Management">
+<meta property="article:author" content="Satish Singhi">
+<meta property="article:published_time" content="2026-03-06">
+<meta property="article:tag" content="SecureBoot">
+<meta property="article:tag" content="Windows Security">
+<meta property="article:tag" content="Endpoint Management">
+<meta property="article:tag" content="Microsoft Intune">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Preparing Your Enterprise for Microsoft Secure Boot Certificate Expiration — June 2026">
+<meta name="twitter:description" content="Field-tested guide to Secure Boot certificate transition — telemetry collection, PowerBI governance dashboards, and registry-based deployment strategy.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #0a66c2;
+    --primary-dark: #004182;
+    --accent: #e7a33e;
+    --bg: #ffffff;
+    --bg-alt: #f3f6f8;
+    --bg-code: #1e1e1e;
+    --text: #191919;
+    --text-secondary: #555;
+    --border: #e0e0e0;
+    --success: #057642;
+    --danger: #cc1016;
+    --warning: #e7a33e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.75;
+    font-size: 17px;
+  }
+
+  /* Hero Banner */
+  .hero {
+    background: linear-gradient(135deg, #0a2647 0%, #144272 40%, #205295 70%, #2c74b3 100%);
+    color: #fff;
+    padding: 80px 40px 70px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 70%, rgba(231,163,62,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    backdrop-filter: blur(8px);
+  }
+  .hero h1 {
+    font-size: 2.6em;
+    font-weight: 800;
+    line-height: 1.2;
+    max-width: 850px;
+    margin: 0 auto 20px;
+    letter-spacing: -0.5px;
+  }
+  .hero .subtitle {
+    font-size: 1.15em;
+    font-weight: 300;
+    opacity: 0.9;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+  }
+  .hero-meta {
+    font-size: 0.9em;
+    opacity: 0.7;
+    margin-top: 10px;
+  }
+  .hero-shield {
+    font-size: 64px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  /* Container */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* Table of Contents */
+  .toc {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin: 48px auto;
+    max-width: 860px;
+  }
+  .toc h2 {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--primary-dark);
+  }
+  .toc ol {
+    padding-left: 20px;
+  }
+  .toc li {
+    margin-bottom: 8px;
+    font-size: 0.95em;
+  }
+  .toc a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Sections */
+  section {
+    padding: 48px 0;
+  }
+  section + section {
+    border-top: 1px solid var(--border);
+  }
+
+  h2 {
+    font-size: 1.75em;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+  h3 {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: var(--text);
+    margin: 32px 0 14px;
+  }
+  h4 {
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 24px 0 10px;
+  }
+
+  p { margin-bottom: 16px; }
+
+  /* Callout boxes */
+  .callout {
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-left: 4px solid;
+  }
+  .callout-danger {
+    background: #fef2f2;
+    border-color: var(--danger);
+  }
+  .callout-danger .callout-title { color: var(--danger); }
+  .callout-warning {
+    background: #fffbeb;
+    border-color: var(--warning);
+  }
+  .callout-warning .callout-title { color: #92610b; }
+  .callout-info {
+    background: #eff6ff;
+    border-color: var(--primary);
+  }
+  .callout-info .callout-title { color: var(--primary); }
+  .callout-success {
+    background: #f0fdf4;
+    border-color: var(--success);
+  }
+  .callout-success .callout-title { color: var(--success); }
+  .callout-title {
+    font-weight: 700;
+    font-size: 0.95em;
+    margin-bottom: 6px;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* Image figures */
+  figure {
+    margin: 32px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fafafa;
+  }
+  figure img {
+    width: 100%;
+    display: block;
+  }
+  figcaption {
+    padding: 12px 18px;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+    background: var(--bg-alt);
+    border-top: 1px solid var(--border);
+    font-style: italic;
+  }
+
+  /* Code blocks */
+  pre {
+    background: var(--bg-code);
+    color: #d4d4d4;
+    padding: 22px 26px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+    font-size: 0.82em;
+    line-height: 1.65;
+    margin: 20px 0;
+    border: 1px solid #333;
+  }
+  code {
+    font-family: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+    font-size: 0.88em;
+  }
+  p code, li code {
+    background: #f0f0f0;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: #c7254e;
+    font-size: 0.85em;
+  }
+
+  /* Syntax highlighting */
+  .kw { color: #569cd6; }
+  .str { color: #ce9178; }
+  .cm { color: #6a9955; }
+  .var { color: #9cdcfe; }
+  .op { color: #d4d4d4; }
+  .num { color: #b5cea8; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.9em;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  thead {
+    background: var(--primary-dark);
+    color: #fff;
+  }
+  th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9em;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: var(--bg-alt); }
+  tbody tr:hover { background: #e8f0fe; }
+
+  /* Links */
+  a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  a:hover { text-decoration: underline; }
+
+  /* Lists */
+  ul, ol {
+    margin: 12px 0 16px 24px;
+  }
+  li { margin-bottom: 8px; }
+
+  /* Divider */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* Architecture diagram */
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 28px 0;
+    padding: 24px;
+    background: var(--bg-alt);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .arch-box {
+    background: #fff;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    padding: 14px 20px;
+    text-align: center;
+    font-size: 0.88em;
+    font-weight: 600;
+    min-width: 140px;
+    color: var(--primary-dark);
+  }
+  .arch-arrow {
+    font-size: 1.5em;
+    color: var(--primary);
+    padding: 0 6px;
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--bg-alt);
+    border-top: 1px solid var(--border);
+    padding: 40px 28px;
+    text-align: center;
+    margin-top: 60px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+  }
+  .footer strong { color: var(--text); }
+
+  /* Tag pills */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 24px 0;
+  }
+  .tag {
+    background: #e8f0fe;
+    color: var(--primary);
+    padding: 5px 14px;
+    border-radius: 16px;
+    font-size: 0.82em;
+    font-weight: 600;
+  }
+
+  /* Timeline / step blocks */
+  .step-block {
+    border-left: 3px solid var(--primary);
+    padding: 16px 0 16px 24px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .step-block::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 20px;
+    width: 12px;
+    height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 2px solid #fff;
+  }
+  .step-block h4 { margin-top: 0; color: var(--primary-dark); }
+
+  /* Registry path highlight */
+  .reg-path {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    margin: 12px 0;
+    word-break: break-all;
+  }
+
+  @media (max-width: 768px) {
+    .hero { padding: 50px 20px 40px; }
+    .hero h1 { font-size: 1.8em; }
+    .container { padding: 0 16px; }
+    .arch-flow { flex-direction: column; }
+    .arch-arrow { transform: rotate(90deg); }
+    table { font-size: 0.8em; }
+    th, td { padding: 8px 10px; }
+  }
+
+  @media print {
+    .hero { padding: 40px 20px; }
+    body { font-size: 14px; }
+    pre { font-size: 11px; }
+    figure { page-break-inside: avoid; }
+    section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= HERO ======================= -->
+<div class="hero">
+  <span class="hero-shield" style="font-size:48px;font-weight:800;letter-spacing:2px;">SECURE BOOT</span>
+  <div class="hero-badge">Enterprise Security &bull; Endpoint Management</div>
+  <h1>Preparing Your Enterprise for Microsoft Secure Boot Certificate Expiration &mdash; June 2026</h1>
+  <p class="subtitle">A comprehensive, field-tested guide to data gathering, governance, and deployment strategy for the Secure Boot certificate transition &mdash; from telemetry collection to PowerBI insights and production rollout.</p>
+  <p class="hero-meta">Written by Satish Singhi &bull; March 2026</p>
+</div>
+
+<!-- ======================= TOC ======================= -->
+<div class="container">
+<nav class="toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li><a href="#background">Background &amp; Context</a></li>
+    <li><a href="#what-is-secureboot">What is Secure Boot &amp; Why It Matters</a></li>
+    <li><a href="#what-is-changing">What is Changing?</a></li>
+    <li><a href="#dependencies">Understanding Dependencies</a></li>
+    <li><a href="#strategy">Strategy: Data Gathering &amp; Governance</a></li>
+    <li><a href="#telemetry">Telemetry &amp; Data Collection Deep Dive</a></li>
+    <li><a href="#insights">Building Insights with PowerBI</a></li>
+    <li><a href="#deployment">Deployment: Certificate Update Rollout</a></li>
+    <li><a href="#conclusion">Conclusion &amp; Key Takeaways</a></li>
+    <li><a href="#references">References &amp; Resources</a></li>
+  </ol>
+</nav>
+</div>
+
+<!-- ======================= BACKGROUND ======================= -->
+<div class="container">
+<section id="background">
+  <h2>1. Background &amp; Context</h2>
+  <p>Microsoft has announced that the Secure Boot certificates originally provisioned in 2011 will expire in <strong>June 2026</strong>. This affects virtually every Windows device in enterprise environments and demands proactive preparation. The transition to the new 2023 certificates is not a simple patch &mdash; it requires thorough understanding of your hardware landscape, firmware readiness, and a deliberate governance-driven rollout plan.</p>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">WARNING: Critical Deadline</div>
+    <p>If your organization has not started preparing, <strong>you are already behind</strong>. The Microsoft 2011 Secure Boot CA certificate expires in June 2026. Devices that haven't been updated will fail to boot trusted code signed with newer certificates, potentially causing significant operational disruption.</p>
+  </div>
+
+  <p>This blog is the result of extensive hands-on work preparing thousands of enterprise devices for this transition. I am sharing the complete approach &mdash; from initial discovery scripts to PowerBI governance dashboards and the final registry-based deployment method &mdash; so that other IT professionals and organizations can benefit from a proven, production-tested playbook.</p>
+
+  <h3>Key Microsoft References</h3>
+  <p>The following official sources were instrumental in building this approach:</p>
+  <ul>
+    <li><a href="https://techcommunity.microsoft.com/blog/windows-itpro-blog/act-now-secure-boot-certificates-expire-in-june-2026/4385728" target="_blank">Act now: Secure Boot certificates expire in June 2026 &mdash; Windows IT Pro Blog</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/secure-boot-certificate-updates-guidance-for-it-professionals-and-organizations-fe498568-dc39-4575-8c1d-4e5e01f2af06" target="_blank">Secure Boot Certificate updates: Guidance for IT professionals and organizations</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf7-4ff0-4ef1-8540-65a30f95e445" target="_blank">Secure Boot DB and DBX variable update events</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/microsoft-intune-method-of-secure-boot-for-windows-devices-with-it-managed-updates-25d76bd2-45a7-406e-9c20-d5bc2e718ab2" target="_blank">Microsoft Intune method of Secure Boot with IT-managed updates</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/registry-key-updates-for-secure-boot-windows-devices-with-it-managed-updates-12cbcf12-f649-4396-85d4-7fce9a001814" target="_blank">Registry key updates for Secure Boot: IT-managed updates</a></li>
+    <li><a href="https://support.microsoft.com/en-us/topic/original-equipment-manufacturer-oem-pages-for-secure-boot-40e2498c-caac-480c-baf1-d40b8c37b267" target="_blank">OEM pages for Secure Boot</a></li>
+    <li><a href="https://www.dell.com/support/kbdoc/en-uk/000259095/microsoft-2011-secure-boot-certificate-expiration" target="_blank">Microsoft 2011 Secure Boot Certificate Expiration &mdash; Dell</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/trusted-launch" target="_blank">Trusted Launch for Azure VMs</a></li>
+    <li><a href="https://directaccess.richardhicks.com/category/secure-boot/" target="_blank">Secure Boot &mdash; Richard M. Hicks Consulting</a></li>
+  </ul>
+</section>
+
+<!-- ======================= WHAT IS SECUREBOOT ======================= -->
+<section id="what-is-secureboot">
+  <h2>2. What is Secure Boot &amp; Why It Matters</h2>
+
+  <h3>Secure Boot Architecture &amp; Components</h3>
+  <p>Secure Boot is a security feature built into the UEFI (Unified Extensible Firmware Interface) firmware specification. It establishes a <strong>chain of trust</strong> from the moment a device powers on through to the operating system kernel loading. Its purpose is straightforward but critical: ensure that only trusted, cryptographically signed code is executed during the boot process.</p>
+
+  <p>The Secure Boot trust chain relies on several certificate databases stored in UEFI firmware:</p>
+
+  <table>
+    <thead>
+      <tr><th>Database</th><th>Full Name</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>PK</strong></td><td>Platform Key</td><td>The root of trust. Typically set by the OEM. Authorizes changes to the KEK database.</td></tr>
+      <tr><td><strong>KEK</strong></td><td>Key Exchange Key</td><td>Authorizes updates to the DB and DBX. Microsoft provisions a KEK to allow Windows to manage the trust chain.</td></tr>
+      <tr><td><strong>DB</strong></td><td>Signature Database (Allow)</td><td>Contains trusted certificates and hashes. Boot loaders signed by certificates in DB are allowed to execute.</td></tr>
+      <tr><td><strong>DBX</strong></td><td>Forbidden Signature Database</td><td>Contains revoked certificates and hashes. Anything matching DBX is blocked from execution &mdash; even if present in DB.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Where Windows Gets Involved</h3>
+  <p>When a Windows device boots with Secure Boot enabled, the firmware checks each component in the boot chain &mdash; the bootloader (<code>bootmgfw.efi</code>), the kernel, and early-load drivers &mdash; against the DB and DBX. Windows relies on the <strong>Microsoft Windows UEFI CA certificate</strong> in the DB to validate its boot components. The KEK certificate allows Microsoft and the OEM to update these databases through Windows Update or manual deployment.</p>
+
+  <h3>Relevance to Enterprise Security in the Age of AI &amp; Emerging Threats</h3>
+  <p>In today's threat landscape, attackers increasingly target the <em>pre-OS boot environment</em>. Bootkits and firmware-level malware like BlackLotus have demonstrated that compromising the boot chain gives an adversary persistent, nearly invisible access that survives OS reinstalls and even disk replacements. Secure Boot is the frontline defense against these attacks.</p>
+
+  <p>With the rise of AI-powered attack techniques and sophisticated supply chain threats, maintaining a verified boot chain is no longer a "nice to have" &mdash; it's <strong>foundational to Zero Trust architecture</strong>. Many compliance frameworks (including conditional access policies in Microsoft Entra) increasingly require Secure Boot as a device health attestation signal.</p>
+
+  <h3>Risks if Not Mitigated Before Certificates Expire</h3>
+  <div class="callout callout-danger">
+    <div class="callout-title">WARNING: What Happens If You Don't Act?</div>
+    <p>If the legacy 2011 certificates expire without the updated 2023 certificates being applied:</p>
+    <ul>
+      <li>Devices may fail to validate boot components signed with new certificates, potentially <strong>preventing boot</strong></li>
+      <li>Windows Update may be unable to deliver future security updates that depend on the new certificate chain</li>
+      <li>Device health attestation signals (used by Conditional Access, Intune Compliance, etc.) may break</li>
+      <li>Manual recovery may be required on affected devices &mdash; at scale, this is operationally devastating</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= WHAT IS CHANGING ======================= -->
+<section id="what-is-changing">
+  <h2>3. What is Changing?</h2>
+  <p>Microsoft is replacing the <strong>Microsoft Corporation KEK CA 2011</strong> and <strong>Microsoft Windows UEFI CA 2011</strong> certificates with their 2023 successors. Specifically:</p>
+
+  <table>
+    <thead>
+      <tr><th>Component</th><th>Legacy (2011)</th><th>New (2023)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>KEK</strong></td>
+        <td>CN=Microsoft Corporation KEK CA 2011</td>
+        <td>CN=Microsoft Corporation KEK 2K CA 2023</td>
+      </tr>
+      <tr>
+        <td><strong>Windows UEFI CA</strong></td>
+        <td>CN=Microsoft Windows Production PCA 2011</td>
+        <td>CN=Microsoft Windows UEFI CA 2023</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The certificate update process involves writing the new certificates to the UEFI firmware's KEK and DB databases. This is a firmware-level change and requires a device reboot to apply. Microsoft has built servicing mechanisms into Windows to facilitate this, but <strong>the process is not automatic for IT-managed devices</strong> &mdash; organizations must explicitly enable the update.</p>
+</section>
+
+<!-- ======================= DEPENDENCIES ======================= -->
+<section id="dependencies">
+  <h2>4. Understanding Dependencies</h2>
+  <p>Before deploying certificate updates at scale, you need to thoroughly understand your environment. This is not a "click and pray" situation. Each of the following areas can be a blocker.</p>
+
+  <h3>Current Secure Boot State</h3>
+  <p>Not all devices in your environment may have Secure Boot enabled. Legacy deployments, BIOS-based imaging, or manual overrides can leave Secure Boot turned off. <strong>Devices with Secure Boot disabled cannot receive certificate updates.</strong></p>
+
+  <h3>Hardware Landscape</h3>
+  <p>Your fleet likely spans multiple OEMs (Dell, Lenovo, HP, etc.), dozens of models, and varying firmware versions. Each OEM has published minimum firmware requirements for Secure Boot certificate compatibility. A device on an old firmware version may not support the update &mdash; or worse, may brick during the process.</p>
+
+  <h3>Firmware Inconsistencies</h3>
+  <p>Even within the same model family, firmware versions can vary wildly across your fleet. OEM-specific BIOS/UEFI updates are a prerequisite in many cases. Microsoft has published OEM-specific guidance pages that map model families to minimum supported firmware versions.</p>
+
+  <h3>Readiness Indicators</h3>
+  <p>Microsoft provides several registry-based signals that indicate whether a device is ready for the certificate update:</p>
+  <ul>
+    <li><code>WindowsUEFICA2023Capable</code> &mdash; Whether the device's servicing stack considers it compatible (values: 0, 1, 2)</li>
+    <li><code>ConfidenceLevel</code> &mdash; Microsoft's assessment of update confidence (High Confidence, Needs More Data, Unknown)</li>
+    <li><code>UEFICA2023Status</code> &mdash; Current update status (NotStarted, InProgress, Updated)</li>
+  </ul>
+
+  <h3>Success / Failure Indicators</h3>
+  <p>Windows logs specific events to track the certificate update lifecycle:</p>
+  <table>
+    <thead>
+      <tr><th>Event ID</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>1800</strong></td><td>Pending reboot &mdash; the certificate update has been staged and is waiting for a restart to apply. Typically seen after the first reboot.</td></tr>
+      <tr><td><strong>1801</strong></td><td>Certificates are available but not yet applied. Contains confidence level and diagnostic information.</td></tr>
+      <tr><td><strong>1808</strong></td><td>Certificates have been successfully updated in firmware. This is the <strong>reliable success indicator</strong>.</td></tr>
+      <tr><td>Others</td><td>Various error and status codes documented in <a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf7-4ff0-4ef1-8540-65a30f95e445" target="_blank">Microsoft's event reference</a></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= STRATEGY ======================= -->
+<section id="strategy">
+  <h2>5. Strategy: Data Gathering &amp; Governance</h2>
+  <p>The cornerstone of this entire approach is <strong>collecting the right data directly from the source of truth</strong> &mdash; the devices themselves. Rather than relying on potentially stale data from Intune device records, SCCM, or third-party tools, I built a custom telemetry collection pipeline that reads directly from each device's registry, firmware, event logs, and system APIs.</p>
+
+  <h3>Architecture Overview</h3>
+  <div class="arch-flow">
+    <div class="arch-box">PowerShell<br>Audit Script<br><small>(runs on device)</small></div>
+    <div class="arch-arrow">&#8594;</div>
+    <div class="arch-box">Scheduled Task<br><small>(daily execution)</small></div>
+    <div class="arch-arrow">&#8594;</div>
+    <div class="arch-box">Azure Log<br>Analytics<br><small>(HTTP Data Collector API)</small></div>
+    <div class="arch-arrow">&#8594;</div>
+    <div class="arch-box">Power BI<br>Dashboards<br><small>(MQuery import)</small></div>
+  </div>
+
+  <h3>Mass Data Collection Approach</h3>
+  <p>The deployment model uses a <strong>single Intune Platform Script</strong> that serves as a wrapper. This script:</p>
+  <ol>
+    <li>Creates a persistent local folder on the device</li>
+    <li>Writes the embedded Audit Script content to a local <code>.ps1</code> file</li>
+    <li>Executes the Audit Script once during initial deployment (silent execution)</li>
+    <li>Creates/updates a <strong>Scheduled Task</strong> to run daily as SYSTEM with highest privileges, whether or not a user is logged on, and runs ASAP if the scheduled time was missed</li>
+  </ol>
+
+  <div class="callout callout-info">
+    <div class="callout-title">TIP: Why Intune Platform Script Instead of an Application Package?</div>
+    <p>This single-script approach was chosen deliberately over packaging as an Intune Win32 Application. It could have been done using Intune Detection Scripts, but due to the <strong>200 script limit for Intune Detection Scripts</strong>, I prefer this method which keeps headroom for detection scripts needed for other purposes in the future. The Platform Script approach is simpler to maintain and deploy.</p>
+  </div>
+
+  <h3>Script Architecture: A Reusable Modular Framework</h3>
+  <p>The solution consists of two scripts working together: a <strong>Main Script</strong> (the Scheduled Task wrapper) and an <strong>Audit Script</strong> (the telemetry collector embedded within). This modular design makes the framework reusable far beyond Secure Boot &mdash; the Main Script can embed <em>any</em> PowerShell script that needs to run as a scheduled task on managed devices.</p>
+
+  <h4>Main Script &mdash; Scheduled Task Wrapper</h4>
+  <p>The Main Script is a self-contained Intune Platform Script that handles deployment, execution, and scheduling. It creates a persistent local folder, writes the embedded secondary script to disk, executes it once during deployment, and registers a daily Scheduled Task running as SYSTEM with highest privileges. If the scheduled time is missed (e.g., device was off), it runs as soon as the device is available.</p>
+  <p>All behavior is controlled through configurable values at the top of the script:</p>
+
+  <table>
+    <thead>
+      <tr><th>Parameter</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>$TaskName</code></td><td>Display name for the Scheduled Task in Task Scheduler</td></tr>
+      <tr><td><code>$TaskPath</code></td><td>Task Scheduler folder path (must start and end with <code>\</code>)</td></tr>
+      <tr><td><code>$DestinationFolder</code></td><td>Local folder where the embedded script is written</td></tr>
+      <tr><td><code>$SecondaryScriptFileName</code></td><td>Filename for the embedded script on disk</td></tr>
+      <tr><td><code>$DailyRunTime</code></td><td>Scheduled execution time in 24-hour <code>HH:mm</code> format</td></tr>
+      <tr><td><code>$RunSecondaryOnceNow</code></td><td>Whether to execute the embedded script immediately during deployment</td></tr>
+      <tr><td><code>$ExecutionPolicy</code></td><td>PowerShell execution policy for both one-time and scheduled runs</td></tr>
+      <tr><td><code>$UseNoProfile</code> / <code>$HiddenWindow</code></td><td>Silent, profile-free execution for background operation</td></tr>
+      <tr><td><code>$AllowOnBatteries</code> / <code>$DontStopOnBatteries</code></td><td>Ensures task runs on laptops regardless of power state</td></tr>
+      <tr><td><code>$EnableLog</code> / <code>$LogPath</code></td><td>Local deployment logging for troubleshooting</td></tr>
+      <tr><td><code>$FailInstallIfSecondaryFails</code></td><td>Controls whether a non-zero exit from the embedded script fails the Intune install</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-success">
+    <div class="callout-title">SUCCESS: Reusability Beyond Secure Boot</div>
+    <p>The Main Script is designed as a <strong>generic scheduled-task deployment vehicle</strong>. By replacing the content within the <code>$SecondaryScriptContent</code> here-string, you can deploy any PowerShell script as a daily scheduled task via Intune &mdash; compliance checks, inventory collectors, configuration enforcers, log shippers, or any other scenario that requires recurring device-level execution under SYSTEM context. The scheduling, logging, battery behavior, and idempotent task registration logic are all handled for you.</p>
+  </div>
+
+  <h4>Audit Script &mdash; Telemetry Collector (Embedded)</h4>
+  <p>The Audit Script is the payload embedded within the Main Script for this Secure Boot use case. It is a comprehensive device posture collector that gathers 45+ data points across Secure Boot readiness, hardware/firmware, identity, OS, patching, and reboot health. It runs under SYSTEM context, ensuring access to all necessary registry keys, UEFI firmware variables, and system APIs without user interaction.</p>
+  <p>Key configurable values within the Audit Script's <code>$Config</code> hashtable:</p>
+
+  <table>
+    <thead>
+      <tr><th>Parameter</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>WorkspaceId</code> / <code>SharedKey</code> / <code>LogType</code></td><td>Azure Log Analytics workspace credentials and custom table name</td></tr>
+      <tr><td><code>LocalMode</code> / <code>LocalModeSendToLA</code></td><td>Toggle between CSV-only, Log Analytics-only, or both</td></tr>
+      <tr><td><code>CsvPath</code> / <code>CsvFileName</code></td><td>Local CSV export location for validation and offline use</td></tr>
+      <tr><td><code>LocalLogRoot</code> / <code>LocalLogFilePrefix</code></td><td>Per-run log file location for device-level troubleshooting</td></tr>
+      <tr><td><code>PreferRdpIdentityForLastLoggedOnUser</code></td><td>Enable RDP/AVD identity fallback for VDI environments</td></tr>
+      <tr><td><code>DeviceTypeRules</code></td><td>Configurable array of naming convention rules to classify device types</td></tr>
+      <tr><td><code>Desired</code></td><td>Explicit pass/fail criteria for the <code>OverallStatus</code> assessment</td></tr>
+      <tr><td><code>MaxEventsToScan</code> / <code>SecurityLogMaxEventsToScan</code></td><td>Event log scan depth controls to balance thoroughness vs. performance</td></tr>
+      <tr><td><code>WuaHistoryMaxItems</code> / <code>WuaHistoryTimeoutSec</code></td><td>WUA history read guardrails to avoid hangs on some devices</td></tr>
+    </tbody>
+  </table>
+
+  <h3>GitHub Repository &amp; Scripts</h3>
+  <div class="callout callout-info">
+    <div class="callout-title">SOURCE CODE</div>
+    <p>The complete scripts are open-sourced on GitHub:</p>
+    <ul>
+      <li><strong>Repository:</strong> <a href="https://github.com/satishsinghi-gh/secureboot_deviceinsights/tree/main" target="_blank">github.com/satishsinghi-gh/secureboot_deviceinsights</a></li>
+      <li><strong>Audit Script (Main + Embedded):</strong> <a href="https://github.com/satishsinghi-gh/secureboot_deviceinsights/blob/main/Device%20Insights%20-%20SecureBoot.ps1" target="_blank">Device Insights - SecureBoot.ps1</a></li>
+      <li><strong>SecureBoot Certificate Update Deployment Script (Registry Config):</strong> <a href="https://github.com/satishsinghi-gh/secureboot_deviceinsights/blob/main/SecureBoot%20Certificate%20Update%20Deployment%20(Registry%20Config).ps1" target="_blank">SecureBoot Certificate Update Deployment (Registry Config).ps1</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================= TELEMETRY ======================= -->
+<section id="telemetry">
+  <h2>6. Telemetry &amp; Data Collection Deep Dive</h2>
+  <p>The audit script collects an extensive set of data points from each device. Every field is designed to answer a specific question about readiness, health, or remediation status. Here is a breakdown of the key telemetry categories:</p>
+
+  <p>The table below is the complete reference of every field collected by the audit script, organized by category. This is derived directly from the script's output schema &mdash; every row sent to Log Analytics or written to CSV contains all of these columns.</p>
+
+  <h3>Execution &amp; Timestamp Fields</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>DeviceName</code></td><td><code>$env:COMPUTERNAME</code></td><td>Hostname identification</td></tr>
+      <tr><td><code>DateOfExecution</code></td><td>Script execution date (<code>yyyy-MM-dd</code>)</td><td>When the telemetry was collected (date only)</td></tr>
+      <tr><td><code>ClientLocalTime</code></td><td>Script execution local time</td><td>Full local date/time of collection (<code>yyyy-MM-dd HH:mm:ss</code>)</td></tr>
+      <tr><td><code>TimeGeneratedUtc</code></td><td>UTC timestamp (ISO 8601)</td><td>Log Analytics time-generated field for accurate ingestion ordering</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Device &amp; Identity Insights</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Entra_DeviceID</code></td><td><code>dsregcmd /status</code></td><td>Unique Entra device identifier for correlation with Intune/Entra data</td></tr>
+      <tr><td><code>Device_AutopilotProfile</code></td><td>Registry: <code>Provisioning\Diagnostics\Autopilot</code></td><td>Autopilot deployment profile name</td></tr>
+      <tr><td><code>Device_Type</code></td><td>Configurable naming convention rules (Initials/Suffix match)</td><td>Classify by use case (Laptop, AVD, Kiosk, Shared PC, etc.) &mdash; most-specific rules win</td></tr>
+      <tr><td><code>Device_UpTime</code></td><td>Calculated: execution time minus <code>LastBootDateTime</code></td><td>Hours since last reboot &mdash; flags devices that haven't rebooted</td></tr>
+      <tr><td><code>Device_Identity_JoinType</code></td><td><code>dsregcmd /status</code></td><td>Entra Joined, Hybrid Joined, Domain Joined, or Workgroup</td></tr>
+      <tr><td><code>LastLoggedOnUser</code></td><td>LogonUI registry + CIM fallback</td><td>Last logged-on user (NTID or best-effort display). Intune primary user is not always reliable (e.g., Kiosks, Shared Devices)</td></tr>
+      <tr><td><code>LastLoggedOnUser_UPN</code></td><td>LogonUI + IdentityStore cache + Security 4624 LogonType 10 fallback (for VDI/AVD)</td><td>User Principal Name &mdash; helps understand who exactly is logging on the device</td></tr>
+      <tr><td><code>LastLoggedOnUserSid</code></td><td>LogonUI registry (<code>LastLoggedOnUserSID</code>)</td><td>SID for authoritative identity resolution and 4624 correlation</td></tr>
+      <tr><td><code>LastLogonDate</code></td><td>Security 4624 (primary) &rarr; Win32_NetworkLoginProfile &rarr; Win32_UserProfile (fallbacks)</td><td>Date of last interactive logon</td></tr>
+      <tr><td><code>LastLogonTimestamp</code></td><td>Same multi-source approach as above</td><td>Full date/time of last interactive logon</td></tr>
+      <tr><td><code>LastLogonSource</code></td><td>Determined by which source provided the logon data</td><td>Indicates whether logon came from Security4624, Win32_NetworkLoginProfile, or Win32_UserProfile</td></tr>
+    </tbody>
+  </table>
+
+  <h3>OS Insights</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>OS_Edition</code></td><td><code>Win32_OperatingSystem.Caption</code></td><td>Full OS edition (e.g., Microsoft Windows 11 Enterprise, Windows 10 IoT Enterprise LTSC)</td></tr>
+      <tr><td><code>OS_DisplayVersion</code></td><td>Registry: <code>CurrentVersion\DisplayVersion</code></td><td>OS release caption (e.g., 24H2, 25H2, 23H2)</td></tr>
+      <tr><td><code>OS_Build</code></td><td>Registry: <code>CurrentVersion\CurrentBuildNumber</code></td><td>Major build number (e.g., 26200)</td></tr>
+      <tr><td><code>OS_BuildFull</code></td><td><code>CurrentBuildNumber.UBR</code></td><td>Full build revision (e.g., 26200.7628) &mdash; indicates patch currency</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Reboot &amp; Patching Insights</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>LastBootDate</code></td><td><code>Win32_OperatingSystem.LastBootUpTime</code></td><td>Date of last reboot (<code>yyyy-MM-dd</code>)</td></tr>
+      <tr><td><code>LastBootTime</code></td><td><code>Win32_OperatingSystem.LastBootUpTime</code></td><td>Time of last reboot (<code>HH:mm:ss</code>)</td></tr>
+      <tr><td><code>LastPatch_InstallDate</code></td><td>CBS <code>Package_for_RollupFix</code> (authoritative)</td><td>Authoritative install date of the latest cumulative update</td></tr>
+      <tr><td><code>LastPatch_ReleaseInfo</code></td><td>Derived from CBS install time</td><td>Patch release period (e.g., <code>2026-02</code>)</td></tr>
+      <tr><td><code>LastPatch_KB</code></td><td>WUA history enrichment (filters Defender/SSU/.NET/MSRT/Preview/OOB)</td><td>KB number of the last cumulative patch</td></tr>
+      <tr><td><code>LastPatch_BuildRevision</code></td><td><code>CurrentBuildNumber.UBR</code> from registry</td><td>Running OS build revision &mdash; this is what the device is actually on right now</td></tr>
+      <tr><td><code>LastPatch_Caption</code></td><td>WUA history enrichment</td><td>Full title of the last cumulative update (e.g., "2026-02 Update (KB5052000) (26200.7628)")</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Hardware &amp; Firmware Insights</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>HW_OEM</code></td><td><code>SecureBoot\Servicing\DeviceAttributes\OEMManufacturerName</code></td><td>OEM Manufacturer (Dell Inc., LENOVO, HP, etc.)</td></tr>
+      <tr><td><code>HW_Model_Family</code></td><td><code>SecureBoot\Servicing\DeviceAttributes\OEMModelSystemFamily</code></td><td>Model family for grouping (e.g., Latitude)</td></tr>
+      <tr><td><code>HW_Model</code></td><td><code>SecureBoot\Servicing\DeviceAttributes\OEMModelNumber</code></td><td>Specific model number (e.g., Latitude 7440)</td></tr>
+      <tr><td><code>HW_SKU</code></td><td><code>SecureBoot\Servicing\DeviceAttributes\OEMModelSKU</code></td><td>Model SKU for further granularity</td></tr>
+      <tr><td><code>HW_FirmwareVersion</code></td><td><code>SecureBoot\Servicing\DeviceAttributes\FirmwareVersion</code></td><td>Current BIOS/UEFI firmware version &mdash; critical for OEM minimum version checks</td></tr>
+      <tr><td><code>HW_FirmwareReleaseDate</code></td><td><code>SecureBoot\Servicing\DeviceAttributes\FirmwareReleaseDate</code></td><td>When the running firmware was released</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">NOTE: Why Firmware Data Matters</div>
+    <p>Microsoft's OEM compatibility pages specify minimum firmware versions required for safe Secure Boot certificate updates. A device running an outdated firmware may fail the update or, in worst-case scenarios, encounter boot issues. This telemetry lets you cross-reference your fleet against OEM requirements before deployment.</p>
+  </div>
+
+  <h3>Secure Boot Insights</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>SecureBoot_Status</code></td><td><code>Confirm-SecureBootUEFI</code> / <code>SecureBoot\State</code> registry</td><td>Is Secure Boot enabled? (True/False)</td></tr>
+      <tr><td><code>SecureBoot_AvailableUpdates</code></td><td><code>HKLM:\...\SecureBoot\AvailableUpdates</code></td><td>Registry value indicating if the update trigger has been deployed (e.g., 22852 = 0x5944)</td></tr>
+      <tr><td><code>SecureBoot_Servicing_ConfidenceLevel</code></td><td><code>SecureBoot\Servicing\ConfidenceLevel</code></td><td>Microsoft's confidence assessment for the device</td></tr>
+      <tr><td><code>SecureBoot_Servicing_CertStatus</code></td><td><code>SecureBoot\Servicing\UEFICA2023Status</code></td><td>Current update status: NotStarted, InProgress, or Updated</td></tr>
+      <tr><td><code>SecureBoot_Servicing_CertUpdate_Compatibility</code></td><td><code>SecureBoot\Servicing\WindowsUEFICA2023Capable</code></td><td>Compatibility level: 0 = not capable, 1 = partially capable, 2 = fully capable</td></tr>
+      <tr><td><code>SecureBoot_Servicing_UEFICA2023Error</code></td><td><code>SecureBoot\Servicing\UEFICA2023Error</code></td><td>Error code if the certificate update failed</td></tr>
+      <tr><td><code>SecureBoot_Servicing_UEFICA2023ErrorEvent</code></td><td><code>SecureBoot\Servicing\UEFICA2023ErrorEvent</code></td><td>Associated error event ID for troubleshooting</td></tr>
+    </tbody>
+  </table>
+
+  <h3>KEK Certificate Insights</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>SecureBoot_Cert_Legacy</code></td><td><code>Get-UEFICertificate -Type KEK</code> (reads firmware directly)</td><td>Subject of the legacy 2011 KEK certificate (Shout out to Richard Hicks)</td></tr>
+      <tr><td><code>SecureBoot_Cert_Desc_Legacy</code></td><td>Same &mdash; Issuer field from X.509 cert</td><td>Issuer/description of the legacy certificate</td></tr>
+      <tr><td><code>SecureBoot_Cert_Expiry_Legacy</code></td><td>Same &mdash; NotAfter field from X.509 cert</td><td>Expiration date of the legacy 2011 certificate</td></tr>
+      <tr><td><code>SecureBoot_Cert_Current</code></td><td><code>Get-UEFICertificate -Type KEK</code> (reads firmware directly)</td><td>Subject of the new 2023 KEK certificate. Does not imply certificates have been applied &mdash; checks firmware presence</td></tr>
+      <tr><td><code>SecureBoot_Cert_Desc_Current</code></td><td>Same &mdash; Issuer field from X.509 cert</td><td>Issuer/description of the 2023 certificate</td></tr>
+      <tr><td><code>SecureBoot_Cert_Expiry_Current</code></td><td>Same &mdash; NotAfter field from X.509 cert</td><td>Expiration date of the new 2023 certificate</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Event Log Insights</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>SecureBoot_CertUpdate_Events_1801</code></td><td>System Event Log (latest Event ID 1801)</td><td>Full message retained &mdash; "Certs available but not applied" content with diagnostics, unless otherwise</td></tr>
+      <tr><td><code>SecureBoot_CertUpdate_Events_1801_TimeStamp</code></td><td>System Event Log</td><td>When the latest 1801 event was logged</td></tr>
+      <tr><td><code>SecureBoot_CertUpdate_Events_1801_Confidence</code></td><td>Parsed from 1801 message body</td><td>Confidence level: High Confidence, Needs More Data, Unknown, Paused, or Blank</td></tr>
+      <tr><td><code>SecureBoot_CertUpdate_Events_1808</code></td><td>System Event Log (latest Event ID 1808)</td><td>"Secure Boot CA certificates have been updated" or "...have not been updated yet" &mdash; <strong>the reliable success indicator</strong></td></tr>
+      <tr><td><code>SecureBoot_CertUpdate_Events_1808_TimeStamp</code></td><td>System Event Log</td><td>When the certificate update completed</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Overall Status</h3>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Source</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>OverallStatus</code></td><td>Computed from configurable <code>$Config.Desired</code> criteria</td><td><strong>"All checks passed"</strong> or <strong>"Need Attention (field_1, field_2)"</strong> &mdash; lists every failing column for targeted remediation</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Overall Status Assessment</h3>
+  <p>The script computes an <code>OverallStatus</code> field based on explicit criteria you define in the configuration:</p>
+<pre><span class="var">$Config.Desired</span> = [ordered]@{
+    SecureBoot_Status                             = <span class="var">$true</span>
+    SecureBoot_Servicing_CertStatus               = <span class="str">"Updated"</span>
+    SecureBoot_Servicing_CertUpdate_Compatibility = <span class="str">"2"</span>
+    SecureBoot_Cert_Current                       = <span class="str">"CN=Microsoft Corporation KEK 2K CA 2023, ..."</span>
+}</pre>
+  <p>If all criteria pass, the status is <strong>"All checks passed"</strong>. Otherwise, it reports <strong>"Need Attention"</strong> with the specific failing columns, making remediation targeting straightforward.</p>
+
+  <h3>Validation Before Mass Deployment</h3>
+  <p>Before ingesting data at scale into Log Analytics, thorough validation is essential:</p>
+
+  <div class="step-block">
+    <h4>Step 1: CSV Validation</h4>
+    <p>Run the script in <code>LocalMode = $true</code> to generate a CSV file. Open it in Excel and verify that all rows, columns, and values are populated as expected. This catches formatting issues, missing data, and unexpected values before they hit your log workspace.</p>
+  </div>
+
+  <div class="step-block">
+    <h4>Step 2: Log Analytics Smoke Test</h4>
+    <p>Configure Log Analytics ingestion and run the script on a single device. Verify the data appears in your custom table in Log Analytics with correct schema and values. Check that timestamps, booleans, and string fields are all properly typed.</p>
+  </div>
+
+  <div class="step-block">
+    <h4>Step 3: Manual Production Test</h4>
+    <p>Run the script manually on a small set of production devices (representing different OEMs, models, and configurations). Validate the ingested data against what you can physically verify on those machines.</p>
+  </div>
+</section>
+
+<!-- ======================= INSIGHTS ======================= -->
+<section id="insights">
+  <h2>7. Building Insights with Power BI</h2>
+  <p>With telemetry flowing into Azure Log Analytics, the next step is transforming raw data into actionable governance dashboards. I imported the Log Analytics data into Power BI using the <strong>MQuery (Kusto) method</strong>, which allows direct querying of the Log Analytics workspace from Power BI.</p>
+
+  <p>The Power BI report is organized into multiple focused pages, each addressing a different dimension of readiness and deployment tracking:</p>
+
+  <figure>
+    <img src="images/powerbi-pages.png" alt="Power BI Report Pages">
+    <figcaption>Figure 2: Power BI report navigation showing all dashboard pages &mdash; Hardware Insights, SecureBoot Insights, Device Insights, OS Insights, Raw Data, SecureBoot Events, Last Run Info, SecureBoot Cert Deployment Status, and SecureBoot State Remediation.</figcaption>
+  </figure>
+
+  <h3>Secure Boot Insights Dashboard</h3>
+  <figure>
+    <img src="images/secureboot-insights.png" alt="SecureBoot Insights Dashboard">
+    <figcaption>Figure 3: SecureBoot Insights &mdash; Shows Secure Boot State summary (True/False/Blank), CA 2023 Compatibility levels (0/1/2), Certificate Update Status (NotStarted/Updated/InProgress), plus model and firmware breakdowns for devices needing attention.</figcaption>
+  </figure>
+  <p>This is the primary governance view. At a glance, you can see what percentage of your fleet has Secure Boot enabled, how many devices are compatible with the 2023 CA update, and the current deployment progress. The model and firmware breakdowns below help identify which hardware segments need firmware updates before certificate deployment.</p>
+
+  <h3>Hardware Insights Dashboard</h3>
+  <figure>
+    <img src="images/hardware-insights.png" alt="Hardware Insights Dashboard">
+    <figcaption>Figure 4: Hardware Insights &mdash; OEM distribution, model breakdown, firmware version summary, and firmware release dates across the fleet.</figcaption>
+  </figure>
+  <p>Understanding your hardware landscape is essential. This dashboard reveals OEM distribution (Dell, Lenovo, HP, etc.), the most common models, and critically, the spread of firmware versions and their release dates. Devices running firmware released before a certain date may need BIOS updates before the Secure Boot certificate update can proceed safely.</p>
+
+  <h3>Device Insights Dashboard</h3>
+  <figure>
+    <img src="images/device-insights.png" alt="Device Insights Dashboard">
+    <figcaption>Figure 5: Device Insights &mdash; Autopilot profiles, last reboot summary, OS version distribution, device type breakdown, and device identity (Entra Joined vs. Hybrid Joined).</figcaption>
+  </figure>
+  <p>This page surfaces operational health indicators that directly affect Secure Boot readiness. The <strong>Last Reboot Summary</strong> is particularly important: devices that haven't rebooted recently won't complete the certificate update (which requires two reboots). The Device Type breakdown helps prioritize deployment rings &mdash; you may want to start with standard laptops before tackling shared devices, kiosks, or AVD instances.</p>
+
+  <h3>OS Insights Dashboard</h3>
+  <figure>
+    <img src="images/os-insights.png" alt="OS Insights Dashboard">
+    <figcaption>Figure 6: OS Insights &mdash; Windows release summary (24H2/23H2/25H2), build version distribution, and OS editions across the fleet.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="images/os-insights-2.png" alt="OS Insights Dashboard - Alternative View">
+    <figcaption>Figure 7: OS Insights (alternative view) &mdash; Detailed build revision breakdown showing patch currency across the environment.</figcaption>
+  </figure>
+
+  <h3>Secure Boot Events Dashboard</h3>
+  <figure>
+    <img src="images/secureboot-events.png" alt="SecureBoot Events Summary">
+    <figcaption>Figure 8: SecureBoot Events Summary &mdash; Pie chart showing the split between devices where "Secure Boot CA certificates have been updated" (green, Event 1808) vs. "Secure Boot CA certificates have not been updated yet" (brown). Below, the raw data table provides per-device detail.</figcaption>
+  </figure>
+  <p>This is the deployment progress tracker. The Event 1808 indicator is the definitive signal that a device has completed the certificate update. Over time, the green slice should grow until it encompasses your entire fleet.</p>
+
+  <h3>Deployment Status &amp; Last Run Info</h3>
+  <figure>
+    <img src="images/secureboot-deployment-status.png" alt="SecureBoot Deployment Status">
+    <figcaption>Figure 9: SecureBoot Cert Deployment Status &mdash; Shows Secure Boot state, certificate update status, UEFICA2023 Error analysis, and error event patterns across the fleet, with per-device raw data below.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="images/last-run-info.png" alt="Last Run Info Dashboard">
+    <figcaption>Figure 10: Last Run Info &mdash; 23H2 and 24H2 build version distributions, telemetry timestamp analysis showing data freshness, and last patched date trends confirming consistent data collection across the fleet.</figcaption>
+  </figure>
+</section>
+
+<!-- ======================= DEPLOYMENT ======================= -->
+<section id="deployment">
+  <h2>8. Deployment: Certificate Update Rollout</h2>
+  <p>After thorough data collection, insight building, and prerequisite verification, the actual deployment is surprisingly straightforward. Based on extensive testing across multiple hardware models and configurations, the <strong>registry-based method has proven to be the most reliable</strong> approach for deploying the Secure Boot certificate updates.</p>
+
+  <h3>The Deployment Method</h3>
+  <p>The simplest and most reliable method to trigger the Secure Boot certificate update is setting a single registry value:</p>
+
+  <div class="reg-path">
+    HKLM:\SYSTEM\CurrentControlSet\Control\SecureBoot\AvailableUpdates = 0x5944 (DWORD, Hex)
+  </div>
+
+  <p>Here is the complete deployment script:</p>
+
+<pre><span class="cm"># ================== CONFIG ==================</span>
+
+<span class="var">$RegPath</span>   = <span class="str">"HKLM:\SYSTEM\CurrentControlSet\Control\SecureBoot"</span>
+<span class="var">$ValueName</span> = <span class="str">"AvailableUpdates"</span>
+<span class="var">$HexValue</span>  = <span class="num">0x5944</span>
+
+<span class="cm"># ============================================</span>
+
+<span class="cm"># Ensure registry path exists</span>
+<span class="kw">if</span> (-not (Test-Path <span class="var">$RegPath</span>)) {
+    New-Item -Path <span class="var">$RegPath</span> -Force | Out-Null
+}
+
+<span class="cm"># Set DWORD value</span>
+New-ItemProperty -Path <span class="var">$RegPath</span> -Name <span class="var">$ValueName</span> `
+    -PropertyType DWord -Value <span class="var">$HexValue</span> -Force | Out-Null</pre>
+
+  <p>This script can be deployed via Intune as a Platform Script, a Remediation Script, or any other deployment mechanism your organization uses.</p>
+
+  <h3>The Reboot Requirement</h3>
+  <div class="callout callout-info">
+    <div class="callout-title">INFO: Two Reboots Required &mdash; But Not Forced</div>
+    <p>Once the registry configuration is deployed, the device will require <strong>two reboots</strong> to complete the certificate update process. However, critically:</p>
+    <ul>
+      <li>The reboot is <strong>neither forced nor prompted</strong></li>
+      <li>As Microsoft documents: "While a restart might be required to complete the process, initiating the deployment of the Secure Boot updates will not cause a restart. If a restart is needed, the Secure Boot deployment relies on restarts happening as the normal course of using the device."</li>
+      <li>Based on extensive testing, I can confirm that the process works exactly as documented &mdash; the updates apply during the next natural reboot cycle</li>
+    </ul>
+  </div>
+
+  <h3>Monitoring the Update Process</h3>
+  <p>After deployment, the progress can be monitored through the following registry values and events:</p>
+
+  <table>
+    <thead>
+      <tr><th>Indicator</th><th>Location / Event</th><th>What It Tells You</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>UEFICA2023Status</strong></td><td>SecureBoot\Servicing registry</td><td>NotStarted &rarr; InProgress &rarr; Updated</td></tr>
+      <tr><td><strong>UEFICA2023Error</strong></td><td>SecureBoot\Servicing registry</td><td>Error code if the update fails (anything other than 0 or blank needs investigation)</td></tr>
+      <tr><td><strong>UEFICA2023ErrorEvent</strong></td><td>SecureBoot\Servicing registry</td><td>Associated error event for troubleshooting</td></tr>
+      <tr><td><strong>Event 1808</strong></td><td>System Event Log</td><td>Definitive confirmation: "Secure Boot CA certificates have been updated"</td></tr>
+      <tr><td><strong>KEK Certificate</strong></td><td>Get-UEFICertificate -Type KEK</td><td>Presence of "KEK 2K CA 2023" in firmware confirms physical update</td></tr>
+    </tbody>
+  </table>
+
+  <p>All of these indicators are captured by the daily audit script, flowing into Log Analytics and surfacing in the Power BI dashboards. This creates a <strong>closed-loop governance model</strong> where you can track deployment progress in near-real-time without manual device checks.</p>
+
+  <h3>Deployment Best Practices</h3>
+  <ol>
+    <li><strong>Test on every hardware model in your environment</strong> before broad deployment. OEM firmware differences can cause unexpected behavior.</li>
+    <li><strong>Ensure prerequisites are met</strong> on each device before enabling the update:
+      <ul>
+        <li>Secure Boot state is <strong>On</strong></li>
+        <li>Device is on the recommended firmware version as per OEM guidance</li>
+        <li>Device has recent OS patches (if not the latest)</li>
+        <li>Device has consistent reboot behavior (uptime is not excessive)</li>
+      </ul>
+    </li>
+    <li><strong>Deploy in rings</strong> &mdash; start with pilot groups, expand to early adopters, then broad deployment</li>
+    <li><strong>Monitor the dashboards daily</strong> during rollout to catch failures early</li>
+    <li><strong>Have a remediation plan</strong> for devices where Secure Boot is off or firmware is outdated</li>
+  </ol>
+</section>
+
+<!-- ======================= CONCLUSION ======================= -->
+<section id="conclusion">
+  <h2>9. Conclusion &amp; Key Takeaways</h2>
+
+  <p>Preparing an enterprise environment for the Microsoft Secure Boot certificate expiration is not just about setting a registry value. It's about building a <strong>comprehensive understanding of your device landscape</strong> and establishing <strong>governance that extends well beyond this single event</strong>.</p>
+
+  <h3>What This Approach Delivers</h3>
+
+  <div class="callout callout-success">
+    <div class="callout-title">SUCCESS: Outcomes Achieved</div>
+    <ul>
+      <li><strong>Deep understanding</strong> of Secure Boot's role in enterprise endpoint security and why it matters in today's threat landscape</li>
+      <li><strong>Comprehensive data gathering pipeline</strong> that collects vital telemetry directly from devices &mdash; the source of truth</li>
+      <li><strong>Reusable insights infrastructure</strong> &mdash; most of the collected data (device health, firmware currency, patching compliance, reboot behavior) remains valuable long after the Secure Boot certificate update is complete</li>
+      <li><strong>Strong governance through actionable dashboards</strong> that enable gap identification, progress tracking, and remediation targeting</li>
+    </ul>
+  </div>
+
+  <h3>Governance Capabilities Established</h3>
+  <p>The telemetry and insights framework built for this project enables ongoing governance across several dimensions:</p>
+  <ul>
+    <li><strong>Gap identification:</strong> Devices with Secure Boot off, outdated firmware, inconsistent reboot or patching behavior are immediately visible and actionable</li>
+    <li><strong>Certificate update progress monitoring:</strong> Real-time tracking of NotStarted &rarr; InProgress &rarr; Updated status across the entire fleet</li>
+    <li><strong>Event log pattern analysis:</strong> Understanding the distribution and timing of 1801/1808 events to detect anomalies and validate rollout health</li>
+    <li><strong>Hardware lifecycle insights:</strong> Firmware age and version data that feeds into broader hardware refresh and compliance programs</li>
+  </ul>
+
+  <h3>Deployment Summary</h3>
+  <p>While the preparation is extensive, the actual deployment mechanism is elegantly simple:</p>
+  <ol>
+    <li><strong>Ensure prerequisites</strong> are met (Secure Boot on, firmware current, device patched, rebooting regularly)</li>
+    <li><strong>Deploy the registry value</strong>: <code>AvailableUpdates = 0x5944</code> at <code>HKLM:\SYSTEM\CurrentControlSet\Control\SecureBoot</code></li>
+    <li><strong>Allow two natural reboots</strong> &mdash; no forced restart required</li>
+    <li><strong>Monitor via Event 1808</strong> and the UEFICA2023Status registry value for confirmation</li>
+  </ol>
+
+  <p>The registry-based method has been the most reliable in my testing, and the process works exactly as Microsoft has documented. The key to success is <strong>thorough preparation, not the deployment itself</strong>.</p>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">URGENT: Time Is Running Out</div>
+    <p>If your organization hasn't started this process, begin immediately. There is significant lead time needed for data collection, firmware remediation, testing across all hardware models, and phased rollout. June 2026 will arrive faster than you think.</p>
+  </div>
+
+  <div class="tags">
+    <span class="tag">#SecureBoot</span>
+    <span class="tag">#WindowsSecurity</span>
+    <span class="tag">#EndpointManagement</span>
+    <span class="tag">#MicrosoftIntune</span>
+    <span class="tag">#UEFI</span>
+    <span class="tag">#EnterpriseIT</span>
+    <span class="tag">#ZeroTrust</span>
+    <span class="tag">#PowerBI</span>
+    <span class="tag">#LogAnalytics</span>
+    <span class="tag">#DeviceGovernance</span>
+    <span class="tag">#CertificateManagement</span>
+    <span class="tag">#ITSecurity</span>
+  </div>
+</section>
+
+<!-- ======================= REFERENCES ======================= -->
+<section id="references">
+  <h2>10. References &amp; Resources</h2>
+  <table>
+    <thead>
+      <tr><th>Resource</th><th>Link</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Act now: Secure Boot certificates expire in June 2026</td><td><a href="https://techcommunity.microsoft.com/blog/windows-itpro-blog/act-now-secure-boot-certificates-expire-in-june-2026/4385728" target="_blank">Windows IT Pro Blog</a></td></tr>
+      <tr><td>Secure Boot Certificate updates: Guidance for IT professionals</td><td><a href="https://support.microsoft.com/en-us/topic/secure-boot-certificate-updates-guidance-for-it-professionals-and-organizations-fe498568-dc39-4575-8c1d-4e5e01f2af06" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>Secure Boot DB and DBX variable update events</td><td><a href="https://support.microsoft.com/en-us/topic/secure-boot-db-and-dbx-variable-update-events-37e47cf7-4ff0-4ef1-8540-65a30f95e445" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>Intune method for Secure Boot IT-managed updates</td><td><a href="https://support.microsoft.com/en-us/topic/microsoft-intune-method-of-secure-boot-for-windows-devices-with-it-managed-updates-25d76bd2-45a7-406e-9c20-d5bc2e718ab2" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>Registry key updates for Secure Boot</td><td><a href="https://support.microsoft.com/en-us/topic/registry-key-updates-for-secure-boot-windows-devices-with-it-managed-updates-12cbcf12-f649-4396-85d4-7fce9a001814" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>OEM pages for Secure Boot</td><td><a href="https://support.microsoft.com/en-us/topic/original-equipment-manufacturer-oem-pages-for-secure-boot-40e2498c-caac-480c-baf1-d40b8c37b267" target="_blank">Microsoft Support</a></td></tr>
+      <tr><td>Dell Secure Boot Certificate Expiration</td><td><a href="https://www.dell.com/support/kbdoc/en-uk/000259095/microsoft-2011-secure-boot-certificate-expiration" target="_blank">Dell Support</a></td></tr>
+      <tr><td>Trusted Launch for Azure VMs</td><td><a href="https://learn.microsoft.com/en-us/azure/virtual-machines/trusted-launch" target="_blank">Microsoft Learn</a></td></tr>
+      <tr><td>Secure Boot (Richard M. Hicks Consulting)</td><td><a href="https://directaccess.richardhicks.com/category/secure-boot/" target="_blank">richardhicks.com</a></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-info">
+    <div class="callout-title">THANKS: Acknowledgments</div>
+    <p>Special thanks to <strong>Richard Hicks</strong> for the Get-UEFICertificate script that reads KEK certificates directly from firmware, which is integrated within the audit script used in this guide.</p>
+  </div>
+</section>
+
+</div>
+
+<!-- ======================= FOOTER ======================= -->
+<div class="footer">
+  <p><strong>Satish Singhi</strong> &bull; Enterprise Endpoint Management &amp; Security</p>
+  <p>Published March 2026 &bull; Written to help IT professionals prepare their organizations for the Secure Boot certificate transition.</p>
+  <p style="margin-top: 12px; font-size: 0.85em;">If you found this useful, please share it with your network. Every enterprise deserves time to prepare.</p>
+</div>
+
+</body>
+</html>
