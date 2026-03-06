@@ -871,57 +871,57 @@
   <p>The Power BI report is organized into multiple focused pages, each addressing a different dimension of readiness and deployment tracking:</p>
 
   <figure>
-    <img src="images/powerbi-pages.png" alt="Power BI Report Pages">
+    <img src="powerbi-pages.png" alt="Power BI Report Pages">
     <figcaption>Figure 2: Power BI report navigation showing all dashboard pages &mdash; Hardware Insights, SecureBoot Insights, Device Insights, OS Insights, Raw Data, SecureBoot Events, Last Run Info, SecureBoot Cert Deployment Status, and SecureBoot State Remediation.</figcaption>
   </figure>
 
   <h3>Secure Boot Insights Dashboard</h3>
   <figure>
-    <img src="images/secureboot-insights.png" alt="SecureBoot Insights Dashboard">
+    <img src="secureboot-insights.png" alt="SecureBoot Insights Dashboard">
     <figcaption>Figure 3: SecureBoot Insights &mdash; Shows Secure Boot State summary (True/False/Blank), CA 2023 Compatibility levels (0/1/2), Certificate Update Status (NotStarted/Updated/InProgress), plus model and firmware breakdowns for devices needing attention.</figcaption>
   </figure>
   <p>This is the primary governance view. At a glance, you can see what percentage of your fleet has Secure Boot enabled, how many devices are compatible with the 2023 CA update, and the current deployment progress. The model and firmware breakdowns below help identify which hardware segments need firmware updates before certificate deployment.</p>
 
   <h3>Hardware Insights Dashboard</h3>
   <figure>
-    <img src="images/hardware-insights.png" alt="Hardware Insights Dashboard">
+    <img src="hardware-insights.png" alt="Hardware Insights Dashboard">
     <figcaption>Figure 4: Hardware Insights &mdash; OEM distribution, model breakdown, firmware version summary, and firmware release dates across the fleet.</figcaption>
   </figure>
   <p>Understanding your hardware landscape is essential. This dashboard reveals OEM distribution (Dell, Lenovo, HP, etc.), the most common models, and critically, the spread of firmware versions and their release dates. Devices running firmware released before a certain date may need BIOS updates before the Secure Boot certificate update can proceed safely.</p>
 
   <h3>Device Insights Dashboard</h3>
   <figure>
-    <img src="images/device-insights.png" alt="Device Insights Dashboard">
+    <img src="device-insights.png" alt="Device Insights Dashboard">
     <figcaption>Figure 5: Device Insights &mdash; Autopilot profiles, last reboot summary, OS version distribution, device type breakdown, and device identity (Entra Joined vs. Hybrid Joined).</figcaption>
   </figure>
   <p>This page surfaces operational health indicators that directly affect Secure Boot readiness. The <strong>Last Reboot Summary</strong> is particularly important: devices that haven't rebooted recently won't complete the certificate update (which requires two reboots). The Device Type breakdown helps prioritize deployment rings &mdash; you may want to start with standard laptops before tackling shared devices, kiosks, or AVD instances.</p>
 
   <h3>OS Insights Dashboard</h3>
   <figure>
-    <img src="images/os-insights.png" alt="OS Insights Dashboard">
+    <img src="os-insights.png" alt="OS Insights Dashboard">
     <figcaption>Figure 6: OS Insights &mdash; Windows release summary (24H2/23H2/25H2), build version distribution, and OS editions across the fleet.</figcaption>
   </figure>
 
   <figure>
-    <img src="images/os-insights-2.png" alt="OS Insights Dashboard - Alternative View">
+    <img src="os-insights-2.png" alt="OS Insights Dashboard - Alternative View">
     <figcaption>Figure 7: OS Insights (alternative view) &mdash; Detailed build revision breakdown showing patch currency across the environment.</figcaption>
   </figure>
 
   <h3>Secure Boot Events Dashboard</h3>
   <figure>
-    <img src="images/secureboot-events.png" alt="SecureBoot Events Summary">
+    <img src="secureboot-events.png" alt="SecureBoot Events Summary">
     <figcaption>Figure 8: SecureBoot Events Summary &mdash; Pie chart showing the split between devices where "Secure Boot CA certificates have been updated" (green, Event 1808) vs. "Secure Boot CA certificates have not been updated yet" (brown). Below, the raw data table provides per-device detail.</figcaption>
   </figure>
   <p>This is the deployment progress tracker. The Event 1808 indicator is the definitive signal that a device has completed the certificate update. Over time, the green slice should grow until it encompasses your entire fleet.</p>
 
   <h3>Deployment Status &amp; Last Run Info</h3>
   <figure>
-    <img src="images/secureboot-deployment-status.png" alt="SecureBoot Deployment Status">
+    <img src="secureboot-deployment-status.png" alt="SecureBoot Deployment Status">
     <figcaption>Figure 9: SecureBoot Cert Deployment Status &mdash; Shows Secure Boot state, certificate update status, UEFICA2023 Error analysis, and error event patterns across the fleet, with per-device raw data below.</figcaption>
   </figure>
 
   <figure>
-    <img src="images/last-run-info.png" alt="Last Run Info Dashboard">
+    <img src="last-run-info.png" alt="Last Run Info Dashboard">
     <figcaption>Figure 10: Last Run Info &mdash; 23H2 and 24H2 build version distributions, telemetry timestamp analysis showing data freshness, and last patched date trends confirming consistent data collection across the fleet.</figcaption>
   </figure>
 </section>
